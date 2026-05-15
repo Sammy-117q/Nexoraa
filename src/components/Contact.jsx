@@ -9,6 +9,7 @@ export default function Contact() {
   });
 
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -19,30 +20,35 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setStatus("");
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/contact",
+        "https://nexoraa-backend-r3q3.onrender.com/api/contact",
         formData
       );
 
-      setStatus("Message sent successfully!");
+      setStatus(res.data.message || "Message sent successfully!");
 
       setFormData({
         name: "",
         email: "",
         message: "",
       });
-
-      console.log(res.data);
     } catch (error) {
       console.log(error);
-      setStatus("Failed to send message.");
+      setStatus("Message failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <section className="min-h-screen bg-black text-white flex items-center justify-center px-6 py-20">
+    <section
+      id="contact"
+      className="min-h-screen bg-black text-white flex items-center justify-center px-6 py-20"
+    >
       <div className="w-full max-w-2xl bg-[#111] p-10 rounded-3xl border border-cyan-500/20 shadow-2xl">
         <h2 className="text-4xl font-bold mb-6 text-cyan-400">
           Start A Project
@@ -76,19 +82,20 @@ export default function Contact() {
             onChange={handleChange}
             rows="6"
             required
-            className="w-full p-4 rounded-xl bg-black border border-gray-700 outline-none focus:border-cyan-400"
+            className="w-full p-4 rounded-xl bg-black border border-gray-700 outline-none focus:border-cyan-400 resize-none"
           />
 
           <button
             type="submit"
-            className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-4 rounded-xl transition duration-300"
+            disabled={loading}
+            className="w-full bg-cyan-400 text-black font-bold py-4 rounded-xl hover:bg-cyan-300 transition disabled:opacity-60"
           >
-            Send Message
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
 
         {status && (
-          <p className="mt-6 text-center text-cyan-400">
+          <p className="mt-6 text-center text-cyan-400 font-semibold">
             {status}
           </p>
         )}
