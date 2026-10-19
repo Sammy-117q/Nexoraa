@@ -1,4 +1,14 @@
-node_modules
+
+node_modules/
+
+# Environment variables and secrets
 .env
-backend/.env
-dist
+.env.*
+!.env.example
+
+# Build files
+dist/
+build/
+
+# Logs
+npm-debug.log*
